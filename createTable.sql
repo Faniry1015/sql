@@ -1,40 +1,61 @@
 -- SQLite
+DROP TABLE recipes;
 
--- CREATE TABLE recipes (
---     id INTEGER PRIMARY KEY AUTOINCREMENT,
---     title VARCHAR(150) NOT NULL,
---     slug VARCHAR(50) UNIQUE NOT NULL,
---     content TEXT,
---     duration SMALLINT,
---     online BOOLEAN,
---     created_at DATETIME
--- );
+DROP TABLE categories;
 
-INSERT INTO recipes (title, slug, content, duration, online, created_at)
-VALUES (
-    'Soupe de poulet',
-    'soupe-poulet',
-    'La soupe de poulet est simple à faire, verser tous vos ingrédients dans la marmites et attendez 30 minutes.',
-    30,
-    1,
-    DATETIME('now')
-), (
-    'Soupe de légumes',
-    'soupe-legumes',
-    'La soupe de légumes est simple à faire, verser tous vos ingrédients dans la marmites et attendez 10 minutes.',
-    10,
-    0,
-    DATETIME('now')
-),(
-    'gratin de pattes',
-    'gratin-pattes',
-    'Le gratin de pattes est simple à faire, verser tous vos ingrédients dans la marmites et attendez 50 minutes.',
-    50,
-    1,
-    DATETIME('now')
-);
--- EXPLAIN QUERY PLAN SELECT * FROM recipes WHERE slug = 'soupe-poulet'; /* Index Scan on recipes using slug_idx */
+PRAGMA foreign_keys = ON;
 
--- PRAGMA index_list('recipes');
--- DROP INDEX idx_recipes_slug;
+CREATE TABLE
+    IF NOT EXISTS categories (
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        title VARCHAR(50) NOT NULL,
+        description TEXT
+    );
 
+CREATE TABLE
+    IF NOT EXISTS recipes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        title VARCHAR(150) NOT NULL,
+        slug VARCHAR(50) UNIQUE NOT NULL,
+        content TEXT,
+        category_id INTEGER,
+        FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE CASCADE
+    );
+
+INSERT INTO
+    categories (title, description)
+VALUES
+    ('Plat', 'Plat principal'),
+    ('Dessert', 'Dessert');
+
+INSERT INTO
+    recipes (title, slug, content, category_id)
+VALUES
+    (
+        'Soupe de poulet',
+        'soupe-poulet',
+        'Voici comment on fait de la soupe de poulet',
+        1
+    ),
+    (
+        'crème anglaise',
+        'creme-anglaise',
+        'Voici comment on fait de la crème anglaise',
+        2
+    ),
+    (
+        'Salade de pattes',
+        'tarte-pommes',
+        'Voici comment on fait de la tarte aux pommes',
+        1
+    );
+
+-- utilisation d'alias et de AS pour renomé l'entête de colonne
+    SELECT r.title, r.content, c.title AS category 
+    FROM recipes r
+    LEFT JOIN categories c ON r.category_id = c.id;
+
+    DELETE FROM categories WHERE id = 2;
+
+    SELECT * FROM recipes r;
+    LEFT JOIN categories c ON r.category_id = c.id
