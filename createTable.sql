@@ -58,4 +58,4 @@ VALUES
     DELETE FROM categories WHERE id = 2;
 
     SELECT * FROM recipes r;
-    LEFT JOIN categories c ON r.category_id = c.id
+    LEFT JOIN categories c ON r.category_id = c.id;
