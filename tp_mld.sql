@@ -3,6 +3,10 @@ PRAGMA foreign_keys = ON;
 
 DROP TABLE IF EXISTS categories_recipes;
 
+DROP TABLE IF EXISTS recipes_ingredients;
+
+DROP TABLE IF EXISTS ingredients;
+
 DROP TABLE IF EXISTS recipes;
 
 DROP TABLE IF EXISTS categories;
@@ -44,6 +48,22 @@ CREATE TABLE
         UNIQUE (recipe_id, category_id)
     );
 
+CREATE TABLE
+    ingredients (
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        title VARCHAR(150) NOT NULL
+    );
+
+CREATE TABLE
+    recipes_ingredients (
+        recipe_id INTEGER NOT NULL,
+        ingredient_id INTEGER NOT NULL,
+        FOREIGN KEY (recipe_id) REFERENCES recipes (id) ON DELETE CASCADE,
+        FOREIGN KEY (ingredient_id) REFERENCES ingredients (id) ON DELETE CASCADE,
+        PRIMARY KEY (recipe_id, ingredient_id),
+        UNIQUE (recipe_id, ingredient_id)
+    );
+
 INSERT INTO
     users (username, email)
 VALUES
@@ -61,8 +81,28 @@ INSERT INTO
 VALUES
     ('Poulet', 'poulet', 'Cuisiner le poulet', 1),
     ('Steak', 'steak', 'Cuisiner le steak', 1),
-    ('Poulet et Steak', 'poulet-et-steak', 'Cuisiner le poulet et le steak', 1),
-    ('Poulet et Steak et fromage', 'poulet-et-steak-et-fromage', 'Cuisiner le poulet et le steak et le fromage', 1);
+    (
+        'Poulet et Steak',
+        'poulet-et-steak',
+        'Cuisiner le poulet et le steak',
+        1
+    ),
+    (
+        'Poulet et Steak et fromage',
+        'poulet-et-steak-et-fromage',
+        'Cuisiner le poulet et le steak et le fromage',
+        1
+    );
+
+INSERT INTO
+    ingredients (title)
+VALUES
+    ('poulet'),
+    ('steak'),
+    ('fromage'),
+    ('laitue'),
+    ('pomme'),
+    ('farine');
 
 INSERT INTO
     categories_recipes (recipe_id, category_id)
@@ -74,3 +114,23 @@ VALUES
     (4, 1),
     (4, 2),
     (4, 3);
+
+INSERT INTO
+    recipes_ingredients (recipe_id, ingredient_id)
+VALUES
+    (1, 1),
+    (2, 2),
+    (3, 1),
+    (3, 2),
+    (4, 1),
+    (4, 2),
+    (4, 3);
+
+SELECT
+    *
+FROM
+    recipes r
+    JOIN categories_recipes cr ON r.id = cr.recipe_id
+    JOIN categories c ON cr.category_id = c.id
+    JOIN recipes_ingredients ri ON r.id = ri.recipe_id
+    JOIN ingredients i ON ri.ingredient_id = i.id;
