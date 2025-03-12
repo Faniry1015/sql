@@ -58,6 +58,8 @@ CREATE TABLE
     recipes_ingredients (
         recipe_id INTEGER NOT NULL,
         ingredient_id INTEGER NOT NULL,
+        quantity INTEGER,
+        unit VARCHAR(20),
         FOREIGN KEY (recipe_id) REFERENCES recipes (id) ON DELETE CASCADE,
         FOREIGN KEY (ingredient_id) REFERENCES ingredients (id) ON DELETE CASCADE,
         PRIMARY KEY (recipe_id, ingredient_id),
@@ -116,15 +118,15 @@ VALUES
     (4, 3);
 
 INSERT INTO
-    recipes_ingredients (recipe_id, ingredient_id)
+    recipes_ingredients (recipe_id, ingredient_id, quantity, unit)
 VALUES
-    (1, 1),
-    (2, 2),
-    (3, 1),
-    (3, 2),
-    (4, 1),
-    (4, 2),
-    (4, 3);
+    (1, 1, 2, 'pcs'),
+    (2, 2, 3, 'kg'),
+    (3, 1, 3, 'kg'),
+    (3, 2, 10, 'T'),
+    (4, 1, 6, 'pcs'),
+    (4, 2, 6, 'pcs'),
+    (4, 3, 1, 'kg');
 
 SELECT
     *
