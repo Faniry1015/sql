@@ -79,20 +79,22 @@ VALUES
     ('dessert');
 
 INSERT INTO
-    recipes (title, slug, preparation, user_id)
+    recipes (title, slug, preparation, duration, user_id)
 VALUES
-    ('Poulet', 'poulet', 'Cuisiner le poulet', 1),
-    ('Steak', 'steak', 'Cuisiner le steak', 1),
+    ('Poulet', 'poulet', 'Cuisiner le poulet', 30, 1),
+    ('Steak', 'steak', 'Cuisiner le steak', 50, 1),
     (
         'Poulet et Steak',
         'poulet-et-steak',
         'Cuisiner le poulet et le steak',
+        5,
         1
     ),
     (
         'Poulet et Steak et fromage',
         'poulet-et-steak-et-fromage',
         'Cuisiner le poulet et le steak et le fromage',
+        30,
         1
     );
 
@@ -129,10 +131,27 @@ VALUES
     (4, 3, 1, 'kg');
 
 UPDATE recipes_ingredients
-SET quantity = 111
-WHERE recipe_id=2 AND ingredient_id = 2;
+SET
+    quantity = 111
+WHERE
+    recipe_id = 2
+    AND ingredient_id = 2;
 
-SELECT r.title, i.title, ri.quantity, ri.unit FROM recipes r
-JOIN recipes_ingredients ri ON ri.recipe_id = r.id
-JOIN ingredients i ON ri.ingredient_id = i.id;
--- WHERE r.title = 'Poulet et Steak et fromage';
+SELECT
+    r.title,
+    i.title,
+    ri.quantity,
+    ri.unit
+FROM
+    recipes r
+    JOIN recipes_ingredients ri ON ri.recipe_id = r.id
+    JOIN ingredients i ON ri.ingredient_id = i.id
+WHERE
+    r.title = 'Poulet et Steak et fromage';
+
+SELECT COUNT(id) as count, duration FROM recipes GROUP BY (duration) HAVING count >= 2; /* having c'est comme where mais qui s'éxécute après l'aggrégation si where erreur car s'effectue avant */
+
+SELECT DISTINCT i.title /* groupant les doublons, interessant sur une seule colonne*/
+FROM ingredients i
+LEFT JOIN recipes_ingredients ri ON ri.ingredient_id = i.id
+LEFT JOIN recipes r ON r.id = ri.recipe_id;
