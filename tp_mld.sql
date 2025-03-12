@@ -151,7 +151,47 @@ WHERE
 
 SELECT COUNT(id) as count, duration FROM recipes GROUP BY (duration) HAVING count >= 2; /* having c'est comme where mais qui s'éxécute après l'aggrégation si where erreur car s'effectue avant */
 
-SELECT DISTINCT i.title /* groupant les doublons, interessant sur une seule colonne*/
+SELECT DISTINCT i.title
 FROM ingredients i
 LEFT JOIN recipes_ingredients ri ON ri.ingredient_id = i.id
 LEFT JOIN recipes r ON r.id = ri.recipe_id;
+/* DISTINCT: groupant les doublons, interessant sur une seule colonne*/
+
+
+SELECT r.title, r.duration
+FROM recipes r
+ORDER BY duration ASC, r.title ASC 
+LIMIT 3 OFFSET 3;
+/* ORDER BY: duration puis titre, OFFSET: commence à partir de l'élément 3*/
+
+/*Sous requêtes*/
+SELECT  *, (
+    SELECT COUNT(*)
+    FROM recipes_ingredients ri
+    WHERE r.id = ri.ingredient_id
+) AS nbr_ingredients
+FROM recipes r;
+
+SELECT r.count
+FROM(
+    SELECT COUNT(id) as count FROM recipes
+) r;
+
+/* Lister tous les ingredients qui ne sont pas utiliser dans "entrée" et "plat"*/
+SELECT i.*
+FROM recipes_ingredients ri 
+LEFT JOIN ingredients i ON i.id = ri.ingredient_id
+WHERE ri.recipe_id IN (
+    SELECT cr.recipe_id
+    FROM categories c 
+    LEFT JOIN categories_recipes cr ON c.id = cr.category_id
+    WHERE c.title NOT IN ('entrée', 'plat')
+);
+
+BEGIN TRANSACTION;
+SELECT * FROM recipes;
+DELETE FROM recipes WHERE id = 1;
+SELECT * FROM recipes;
+COMMIT TRANSACTION;
+/*ROOLBACK TRANSACTION si satisfait*/
+SELECT * FROM recipes;
