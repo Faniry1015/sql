@@ -128,11 +128,11 @@ VALUES
     (4, 2, 6, 'pcs'),
     (4, 3, 1, 'kg');
 
-SELECT
-    *
-FROM
-    recipes r
-    JOIN categories_recipes cr ON r.id = cr.recipe_id
-    JOIN categories c ON cr.category_id = c.id
-    JOIN recipes_ingredients ri ON r.id = ri.recipe_id
-    JOIN ingredients i ON ri.ingredient_id = i.id;
+UPDATE recipes_ingredients
+SET quantity = 111
+WHERE recipe_id=2 AND ingredient_id = 2;
+
+SELECT r.title, i.title, ri.quantity, ri.unit FROM recipes r
+JOIN recipes_ingredients ri ON ri.recipe_id = r.id
+JOIN ingredients i ON ri.ingredient_id = i.id;
+-- WHERE r.title = 'Poulet et Steak et fromage';
