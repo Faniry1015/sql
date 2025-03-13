@@ -5,6 +5,8 @@ DROP TABLE IF EXISTS categories_recipes;
 
 DROP TABLE IF EXISTS recipes_ingredients;
 
+DROP VIEW IF EXISTS v_recipes;
+
 DROP TABLE IF EXISTS ingredients;
 
 DROP TABLE IF EXISTS recipes;
@@ -193,5 +195,14 @@ SELECT * FROM recipes;
 DELETE FROM recipes WHERE id = 1;
 SELECT * FROM recipes;
 COMMIT TRANSACTION;
-/*ROOLBACK TRANSACTION si satisfait*/
+/*ROOLBACK TRANSACTION si satisfait, il y a un rollback automatique en cas d'erreur*/
 SELECT * FROM recipes;
+
+-- Vues
+CREATE VIEW v_recipes
+AS
+    SELECT r.title, GROUP_CONCAT(i.title, ', ') AS liste_ingredients
+    FROM recipes r 
+    LEFT JOIN recipes_ingredients ri ON ri.recipe_id = r.id
+    LEFT JOIN ingredients i ON ri.ingredient_id = i.id
+    GROUP BY r.title;
