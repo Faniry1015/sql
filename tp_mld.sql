@@ -221,3 +221,7 @@ BEGIN
 END;
 
 SELECT * FROM sqlite_master WHERE type = 'trigger';
+
+WITH temptable AS (
+    
+)
