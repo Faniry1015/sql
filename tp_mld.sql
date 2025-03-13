@@ -15,6 +15,8 @@ DROP TABLE IF EXISTS categories;
 
 DROP TABLE IF EXISTS users;
 
+DROP TRIGGER IF EXISTS update_ingredient_count_on_insert;
+
 CREATE TABLE
     users (
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -206,3 +208,16 @@ AS
     LEFT JOIN recipes_ingredients ri ON ri.recipe_id = r.id
     LEFT JOIN ingredients i ON ri.ingredient_id = i.id
     GROUP BY r.title;
+
+ALTER TABLE ingredients
+ADD COLUMN usage_count INTEGER DEFAULT 0;
+
+CREATE TRIGGER update_ingredient_count_on_insert
+AFTER INSERT ON recipes_ingredients
+BEGIN
+    UPDATE ingredients
+    SET usage_count = usage_count + 1
+    WHERE id = NEW.ingredient_id
+END;
+
+SELECT * FROM sqlite_master WHERE type = 'trigger';
